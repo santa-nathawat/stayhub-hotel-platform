@@ -18,7 +18,8 @@ export default function SearchPage() {
   const city = searchParams.get('city') || '';
   const checkIn = searchParams.get('checkIn') || '';
   const checkOut = searchParams.get('checkOut') || '';
-  const guests = Number(searchParams.get('guests')) || 2;
+  const guestsParam = searchParams.get('guests');
+  const guests = Number(guestsParam) || 2;
 
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
@@ -36,7 +37,7 @@ export default function SearchPage() {
       city: city || undefined,
       checkIn: checkIn || undefined,
       checkOut: checkOut || undefined,
-      guests: guests || undefined,
+      guests: guestsParam ? guests : undefined,
       minPrice: minPrice || undefined,
       maxPrice: maxPrice || undefined,
       stars: stars.length > 0 ? stars : undefined,

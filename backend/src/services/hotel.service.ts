@@ -252,6 +252,10 @@ export async function deleteHotel(id: string, ownerId: string) {
     throw new Error('Hotel not found or unauthorized');
   }
 
+  // Delete records that lack cascade on the hotel relation
+  await prisma.booking.deleteMany({ where: { hotelId: id } });
+  await prisma.review.deleteMany({ where: { hotelId: id } });
+
   await prisma.hotel.delete({ where: { id } });
 }
 
