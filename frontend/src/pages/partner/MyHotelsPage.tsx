@@ -21,7 +21,9 @@ export default function MyHotelsPage() {
     try {
       const updated = await togglePublish(id);
       setHotels(prev => prev.map(h => h.id === id ? { ...h, published: updated.published } : h));
-    } catch {}
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to update hotel status.');
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -29,7 +31,9 @@ export default function MyHotelsPage() {
     try {
       await deleteHotel(id);
       setHotels(prev => prev.filter(h => h.id !== id));
-    } catch {}
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to delete hotel. Make sure you are the owner.');
+    }
   };
 
   if (loading) {

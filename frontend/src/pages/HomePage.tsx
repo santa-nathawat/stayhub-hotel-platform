@@ -38,7 +38,7 @@ export default function HomePage() {
               Discover and book hotels worldwide at the best prices
             </p>
           </div>
-          <div className="max-w-4xl mx-auto">
+          <div className="w-full">
             <SearchBar />
           </div>
         </div>

@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import { AMENITIES } from '../../lib/constants';
 import { cn } from '../../lib/utils';
+import api from '../../api/client';
 
 interface HotelFormData {
   name: string;
@@ -37,19 +38,34 @@ export default function HotelForm({ initialData, onSubmit, submitLabel }: HotelF
   const [checkInTime, setCheckInTime] = useState(initialData?.checkInTime || '14:00');
   const [checkOutTime, setCheckOutTime] = useState(initialData?.checkOutTime || '11:00');
   const [amenities, setAmenities] = useState<string[]>(initialData?.amenities || []);
-  const [imageUrl, setImageUrl] = useState('');
   const [images, setImages] = useState<{ url: string; alt?: string }[]>(initialData?.images || []);
+  const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleAmenity = (a: string) => {
     setAmenities(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a]);
   };
 
-  const addImage = () => {
-    if (imageUrl.trim()) {
-      setImages(prev => [...prev, { url: imageUrl.trim() }]);
-      setImageUrl('');
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    setUploading(true);
+    try {
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('image', file);
+        const res = await api.post('/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        setImages(prev => [...prev, { url: res.data.url, alt: file.name }]);
+      }
+    } catch {
+      setError('Image upload failed. Please try again.');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -116,9 +132,29 @@ export default function HotelForm({ initialData, onSubmit, submitLabel }: HotelF
       {/* Images */}
       <div className="bg-white border border-apple-border rounded-2xl p-6 space-y-4">
         <h2 className="text-lg font-semibold text-apple-text">Images</h2>
-        <div className="flex gap-2">
-          <Input id="imageUrl" placeholder="Paste image URL" value={imageUrl} onChange={e => setImageUrl(e.target.value)} className="flex-1" />
-          <Button type="button" variant="secondary" onClick={addImage}>Add</Button>
+        <div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={handleFileChange}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="w-full border-2 border-dashed border-apple-border rounded-xl py-8 flex flex-col items-center gap-2 text-apple-text-secondary hover:border-apple-blue hover:text-apple-blue transition-colors disabled:opacity-50"
+          >
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span className="text-sm font-medium">
+              {uploading ? 'Uploading...' : 'Click to upload photos'}
+            </span>
+            <span className="text-xs">JPG, PNG, WebP — multiple files supported</span>
+          </button>
         </div>
         {images.length > 0 && (
           <div className="flex flex-wrap gap-3">
@@ -130,7 +166,7 @@ export default function HotelForm({ initialData, onSubmit, submitLabel }: HotelF
                   onClick={() => removeImage(idx)}
                   className="absolute top-1 right-1 w-5 h-5 bg-black/50 text-white rounded-full text-xs flex items-center justify-center"
                 >
-                  x
+                  ×
                 </button>
               </div>
             ))}

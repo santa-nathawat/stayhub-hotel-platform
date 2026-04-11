@@ -173,6 +173,7 @@ export async function createHotel(ownerId: string, data: any) {
       starRating: data.starRating || 3,
       checkInTime: data.checkInTime || '14:00',
       checkOutTime: data.checkOutTime || '11:00',
+      published: true,
       ownerId,
       images: data.images ? {
         create: data.images.map((img: any, idx: number) => ({
