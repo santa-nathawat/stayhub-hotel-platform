@@ -6,7 +6,7 @@ export async function getHotelReviews(req: Request, res: Response, next: NextFun
   try {
     const { page, limit } = req.query;
     const result = await reviewService.getHotelReviews(
-      req.params.hotelId,
+      req.params.hotelId as string,
       page ? parseInt(page as string) : 1,
       limit ? parseInt(limit as string) : 10,
     );
@@ -18,7 +18,7 @@ export async function getHotelReviews(req: Request, res: Response, next: NextFun
 
 export async function createReview(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const review = await reviewService.createReview(req.user!.userId, req.params.hotelId, req.body);
+    const review = await reviewService.createReview(req.user!.userId, req.params.hotelId as string, req.body);
     res.status(201).json(review);
   } catch (error) {
     if (error instanceof Error && error.message.includes('already reviewed')) {
@@ -31,7 +31,7 @@ export async function createReview(req: AuthRequest, res: Response, next: NextFu
 
 export async function deleteReview(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    await reviewService.deleteReview(req.params.id, req.user!.userId);
+    await reviewService.deleteReview(req.params.id as string, req.user!.userId);
     res.json({ message: 'Review deleted' });
   } catch (error) {
     if (error instanceof Error && error.message.includes('unauthorized')) {

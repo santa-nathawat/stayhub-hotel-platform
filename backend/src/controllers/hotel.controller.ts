@@ -34,7 +34,7 @@ export async function getFeaturedHotels(_req: Request, res: Response, next: Next
 
 export async function getHotelById(req: Request, res: Response, next: NextFunction) {
   try {
-    const hotel = await hotelService.getHotelById(req.params.id);
+    const hotel = await hotelService.getHotelById(req.params.id as string);
     if (!hotel) {
       res.status(404).json({ error: 'Hotel not found' });
       return;
@@ -56,7 +56,7 @@ export async function createHotel(req: AuthRequest, res: Response, next: NextFun
 
 export async function updateHotel(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const hotel = await hotelService.updateHotel(req.params.id, req.user!.userId, req.body);
+    const hotel = await hotelService.updateHotel(req.params.id as string, req.user!.userId, req.body);
     res.json(hotel);
   } catch (error) {
     if (error instanceof Error && error.message.includes('unauthorized')) {
@@ -69,7 +69,7 @@ export async function updateHotel(req: AuthRequest, res: Response, next: NextFun
 
 export async function deleteHotel(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    await hotelService.deleteHotel(req.params.id, req.user!.userId);
+    await hotelService.deleteHotel(req.params.id as string, req.user!.userId);
     res.json({ message: 'Hotel deleted' });
   } catch (error) {
     if (error instanceof Error && error.message.includes('unauthorized')) {
@@ -82,7 +82,7 @@ export async function deleteHotel(req: AuthRequest, res: Response, next: NextFun
 
 export async function togglePublish(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const hotel = await hotelService.togglePublish(req.params.id, req.user!.userId);
+    const hotel = await hotelService.togglePublish(req.params.id as string, req.user!.userId);
     res.json(hotel);
   } catch (error) {
     next(error);

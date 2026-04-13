@@ -16,7 +16,7 @@ router.get('/stats', async (req: AuthRequest, res: Response, next: NextFunction)
       where: { ownerId },
       select: { id: true },
     });
-    const hotelIds = hotels.map(h => h.id);
+    const hotelIds = hotels.map((h: { id: string }) => h.id);
 
     const [totalBookings, revenue, reviews] = await Promise.all([
       prisma.booking.count({
@@ -62,7 +62,7 @@ router.get('/revenue-chart', async (req: AuthRequest, res: Response, next: NextF
       where: { ownerId },
       select: { id: true },
     });
-    const hotelIds = hotels.map(h => h.id);
+    const hotelIds = hotels.map((h: { id: string }) => h.id);
 
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
@@ -77,7 +77,7 @@ router.get('/revenue-chart', async (req: AuthRequest, res: Response, next: NextF
     });
 
     const monthlyRevenue: Record<string, number> = {};
-    bookings.forEach(b => {
+    bookings.forEach((b: { totalPrice: number; createdAt: Date }) => {
       const key = `${b.createdAt.getFullYear()}-${String(b.createdAt.getMonth() + 1).padStart(2, '0')}`;
       monthlyRevenue[key] = (monthlyRevenue[key] || 0) + b.totalPrice;
     });

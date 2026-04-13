@@ -28,7 +28,7 @@ export async function getUserBookings(req: AuthRequest, res: Response, next: Nex
 
 export async function getBookingById(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const booking = await bookingService.getBookingById(req.params.id, req.user!.userId);
+    const booking = await bookingService.getBookingById(req.params.id as string, req.user!.userId);
     res.json(booking);
   } catch (error) {
     if (error instanceof Error) {
@@ -47,7 +47,7 @@ export async function getBookingById(req: AuthRequest, res: Response, next: Next
 
 export async function cancelBooking(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const booking = await bookingService.cancelBooking(req.params.id, req.user!.userId);
+    const booking = await bookingService.cancelBooking(req.params.id as string, req.user!.userId);
     res.json(booking);
   } catch (error) {
     if (error instanceof Error) {
@@ -66,7 +66,7 @@ export async function cancelBooking(req: AuthRequest, res: Response, next: NextF
 
 export async function confirmBooking(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const booking = await bookingService.confirmBooking(req.params.id, req.user!.userId);
+    const booking = await bookingService.confirmBooking(req.params.id as string, req.user!.userId);
     res.json(booking);
   } catch (error) {
     if (error instanceof Error && error.message.includes('unauthorized')) {
@@ -79,7 +79,7 @@ export async function confirmBooking(req: AuthRequest, res: Response, next: Next
 
 export async function getHotelBookings(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const bookings = await bookingService.getHotelBookings(req.params.hotelId, req.user!.userId);
+    const bookings = await bookingService.getHotelBookings(req.params.hotelId as string, req.user!.userId);
     res.json(bookings);
   } catch (error) {
     if (error instanceof Error && error.message.includes('unauthorized')) {

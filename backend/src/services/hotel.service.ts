@@ -72,9 +72,9 @@ export async function searchHotels(params: SearchParams) {
     prisma.hotel.count({ where }),
   ]);
 
-  const hotelsWithStats = hotels.map(hotel => {
+  const hotelsWithStats = hotels.map((hotel) => {
     const avgRating = hotel.reviews.length > 0
-      ? hotel.reviews.reduce((sum, r) => sum + r.rating, 0) / hotel.reviews.length
+      ? hotel.reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / hotel.reviews.length
       : 0;
     const startingPrice = hotel.rooms[0]?.pricePerNight || 0;
     return {
@@ -111,9 +111,9 @@ export async function getFeaturedHotels() {
     orderBy: { createdAt: 'desc' },
   });
 
-  return hotels.map(hotel => {
+  return hotels.map((hotel) => {
     const avgRating = hotel.reviews.length > 0
-      ? hotel.reviews.reduce((sum, r) => sum + r.rating, 0) / hotel.reviews.length
+      ? hotel.reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / hotel.reviews.length
       : 0;
     return {
       ...hotel,
@@ -149,7 +149,7 @@ export async function getHotelById(id: string) {
   if (!hotel) return null;
 
   const avgRating = hotel.reviews.length > 0
-    ? hotel.reviews.reduce((sum, r) => sum + r.rating, 0) / hotel._count.reviews
+    ? hotel.reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / hotel._count.reviews
     : 0;
 
   return {
