@@ -11,7 +11,4 @@ export default defineConfig({
   migrations: {
     path: path.join(__dirname, 'migrations'),
   },
-  datasource: {
-    url: process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@localhost:5432/hotel_booking',
-  },
 })
